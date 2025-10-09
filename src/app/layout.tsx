@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 // @ts-ignore
 import "./globals.css";
 
@@ -16,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Teacher Assistant Dashboard",
-  description: "A comprehensive dashboard for managing classroom activities, student data, and teacher resources.",
+  description:
+    "A comprehensive dashboard for managing classroom activities, student data, and teacher resources.",
 };
 
 export default function RootLayout({
@@ -25,12 +26,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Toaster position="top-right" />
-        {children}
+    <html lang="en" suppressHydrationWarning> 
+      {/* suppressHydrationWarning avoids hydration mismatches on font variables */}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {/* ✅ Global Redux Store Provider */}
+          {/* ✅ Toasts */}
+          <Toaster position="top-right" reverseOrder={false} />
+          {/* ✅ Main app content */}
+          {children}
       </body>
     </html>
   );
