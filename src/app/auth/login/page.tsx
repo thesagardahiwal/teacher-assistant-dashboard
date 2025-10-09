@@ -9,6 +9,7 @@ import { useApi } from '@/hooks/useApi'
 import { teacherService } from '@/services'
 import toast from 'react-hot-toast'
 import ApiLoader from '@/components/ApiLoader'
+import useAuth from '@/hooks/useAuth'
 
 
 
@@ -22,7 +23,7 @@ type LoginFormData = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
   const router = useRouter();
-  
+  const { entry } = useAuth();
   const {execute, error, loading} = useApi(teacherService.login);
   const [showPassword, setShowPassword] = useState(false)
   const {
@@ -37,8 +38,10 @@ export default function LoginPage() {
   const handleLogin = async (data: LoginFormData) => {
     try {
       const response = await execute(data);
-
       if (response.success) {
+        if (response.data?.teacher) {
+          entry(response.data.teacher);
+        }
         toast.success(response.message || "Welcome back!");
         router.push('/dashboard');
       } else {

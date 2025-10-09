@@ -9,6 +9,7 @@ import ApiLoader from '@/components/ApiLoader'
 import { useApi } from '@/hooks/useApi'
 import { teacherService } from '@/services'
 import toast from 'react-hot-toast'
+import useAuth from '@/hooks/useAuth'
 
 // Zod schema for form validation
 const registerSchema = z.object({
@@ -29,7 +30,7 @@ type RegisterFormData = z.infer<typeof registerSchema>
 export default function RegisterPage() {
   const router = useRouter()
   const { error, execute, loading, success, message, status } = useApi(teacherService.register)
-
+  const { entry } = useAuth();
   const {
     register,
     handleSubmit,
@@ -45,6 +46,9 @@ export default function RegisterPage() {
       const response = await execute(data);
 
       if (response.success) {
+        if (response.data?.teacher) {
+          entry(response.data.teacher);
+        };
         toast.success(response.message || "Registered successfully");
         router.push('/auth/login');
       } else {
