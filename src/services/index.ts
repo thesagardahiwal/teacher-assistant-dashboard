@@ -1,0 +1,13 @@
+export { teacherService } from "./teacherService";
+export { studentService } from "./studentService";
+export { attendanceService } from "./attendanceService";
+export { lectureService } from "./lectureService";
+export { teacherAttendanceService } from "./teacherAttendanceService";
+export { leaveService } from "./leaveService";
+export { teacherPerformanceService } from "./teacherPerformanceService";
+export { batchService } from "./batchService";
+export { batchAnalyticsService } from "./batchAnalyticsService";
+export { subjectService } from "./subjectService";
+export { assignmentService } from "./assignmentService";
+export { syllabusService } from "./syllabusService";
+export { teachingDiaryService } from "./teachingDiaryService";

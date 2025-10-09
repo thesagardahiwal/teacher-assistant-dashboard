@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { FaChalkboardTeacher, FaClipboardList, FaUserGraduate, FaRegLightbulb, FaChartLine } from 'react-icons/fa'
+import Image from 'next/image'
 
 export default async function LandingPage() {
   const cookieStore = await cookies()
@@ -20,17 +21,17 @@ export default async function LandingPage() {
           </span>
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+        <div className="sm:flex flex-col hidden sm:flex-row gap-3 w-full sm:w-auto">
           {!token ? (
             <>
               <Link
-                href="/login"
+                href="/auth/login"
                 className="px-5 py-2 rounded-md bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white font-medium shadow-sm transition-colors text-center"
               >
                 Sign In
               </Link>
               <Link
-                href="/register"
+                href="/auth/register"
                 className="px-5 py-2 rounded-md border border-teal-600 dark:border-teal-400 text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-gray-800 font-medium transition-colors text-center"
               >
                 Get Started
@@ -66,10 +67,10 @@ export default async function LandingPage() {
           {!token ? (
             <>
               <Link
-                href="/register"
+                href="/auth/register"
                 className="px-8 py-3 rounded-lg bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white font-medium shadow-md transition-colors text-center"
               >
-                Start Free Trial
+                Let's Get Started
               </Link>
               <Link
                 href="/features"
@@ -147,7 +148,7 @@ export default async function LandingPage() {
       <TestimonialSection />
 
       {/* Pricing Section */}
-      <PricingSection />
+      {/* <PricingSection /> */}
 
       {/* Footer */}
       <footer className="bg-gray-50 dark:bg-gray-900 py-12 border-t border-gray-200 dark:border-gray-800">
@@ -241,18 +242,22 @@ function TestimonialCard({ quote, name, role, avatar }: {
       <div className="flex items-center mb-4">
         <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden mr-4">
           {/* Replace with actual avatar image */}
-          <div className="w-full h-full flex items-center justify-center text-gray-500">
-            <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-            </svg>
-          </div>
+          {!avatar ? (
+            <div className="w-full h-full flex items-center justify-center text-gray-500">
+              <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+              </svg>
+            </div>
+          ) : (
+            <Image src={avatar} width={50} height={50} alt={name} className="w-full h-full object-cover" />
+          )}
         </div>
         <div>
           <h4 className="font-medium">{name}</h4>
           <p className="text-gray-600 dark:text-gray-400 text-sm">{role}</p>
         </div>
       </div>
-      <p className="text-gray-700 dark:text-gray-300 italic">"{quote}"</p>
+      <p className="text-gray-700 dark:text-gray-300 italic">&quot;{quote}&quot;</p>
     </div>
   )
 }

@@ -1,26 +1,11 @@
-interface IDynamicField {
-  fieldName: string;
-  value: any;
-  fieldType: 'string' | 'number' | 'boolean' | 'date' | 'array' | 'object';
-}
-
-interface IStudent {
-  _id?: string;
-  rollNumber: string;
-  name?: string;
-  email?: string;
-  classrooms?: string[]; // Array of Classroom IDs
-  customFields?: IDynamicField[];
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import { IStudent } from '../types/student.types';
 
 interface IImportStudentResponse {
   importedCount: number;
   duplicates: number;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL+'/students'; // Using Next.js API routes proxy
+const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL+'/api/students'; // Using Next.js API routes proxy
 
 class StudentService {
   private static async fetchHandler(url: string, options: RequestInit = {}) {

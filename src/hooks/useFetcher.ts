@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-type RequestBody = BodyInit | Record<string, unknown> | null;
+type RequestBody = BodyInit | Record<string, any> | null;
 type RequestHeaders = Record<string, string>;
 
 interface FetchOptions<T> {
@@ -31,15 +31,16 @@ interface UseFetcherReturn<T> extends FetchState<T> {
   cancel: () => void;
   mutate: (data: T) => void;
   refetch: () => Promise<T>;
+  clearCache: (key?: string) => void;
 }
 
 // Cache storage
-const cache = new Map<string, { data: unknown; timestamp: number }>();
+const cache = new Map<string, { data: any; timestamp: number }>();
 
 // Request deduplication
 const pendingRequests = new Map<string, Promise<any>>();
 
-export function useFetcher<T = unknown>(
+export function useFetcher<T = any>(
   initialUrl?: string,
   initialOptions?: FetchOptions<T>
 ): UseFetcherReturn<T> {
@@ -63,20 +64,7 @@ export function useFetcher<T = unknown>(
     }
   }, []);
 
-  const processResponse = async (response: Response): Promise<T> => {
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null);
-      throw new Error(
-        errorData?.message || `Request failed with status ${response.status}`
-      );
-    }
 
-    const contentType = response.headers.get('content-type');
-    if (contentType?.includes('application/json')) {
-      return response.json() as Promise<T>;
-    }
-    return response.text() as unknown as Promise<T>;
-  };
 
   const fetchData = useCallback(
     async (
@@ -93,7 +81,20 @@ export function useFetcher<T = unknown>(
         retryDelay = 1000,
         timeout = 30000, // 30 seconds default timeout
       } = options;
+      const processResponse = async (response: Response): Promise<T> => {
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null);
+          throw new Error(
+            errorData?.message || `Request failed with status ${response.status}`
+          );
+        }
 
+        const contentType = response.headers.get('content-type');
+        if (contentType?.includes('application/json')) {
+          return response.json() as Promise<T>;
+        }
+        return response.text() as unknown as Promise<T>;
+      };
       // Check cache first
       if (cacheKey && method === 'GET' && cache.has(cacheKey)) {
         const cached = cache.get(cacheKey);
@@ -236,7 +237,7 @@ export function useFetcher<T = unknown>(
     return () => {
       cancel();
     };
-  }, [initialUrl, initialOptions?.immediate, fetchData, cancel]);
+  }, [initialUrl, initialOptions, fetchData, cancel]);
 
   return {
     ...state,
@@ -244,5 +245,6 @@ export function useFetcher<T = unknown>(
     cancel,
     mutate,
     refetch,
+    clearCache,
   };
 }

@@ -4,14 +4,14 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value
 
   const isAuth = !!token
-  const isAuthPage = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/register')
+  const isAuthPage = request.nextUrl.pathname.startsWith('/auth/login') || request.nextUrl.pathname.startsWith('/auth/register')
 
   if (isAuthPage && isAuth) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
   if (!isAuth && !isAuthPage && request.nextUrl.pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    return NextResponse.redirect(new URL('/auth/login', request.url))
   }
 
   return NextResponse.next()
@@ -21,7 +21,7 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/dashboard/:path*',
-    '/login',
-    '/register',
+    '/auth/login',
+    '/auth/register',
   ],
 }
