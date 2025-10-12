@@ -25,3 +25,15 @@ export const registerTeacher = createAsyncThunk(
     }
   }
 );
+
+export const verifyTeacher = createAsyncThunk(
+  "auth/verifyTeacher",
+  async (_, thunkAPI) => {
+    try {
+      const res = await teacherService.varify();
+      return res.data;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);

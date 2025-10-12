@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning> 
       {/* suppressHydrationWarning avoids hydration mismatches on font variables */}
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`antialiased`}>
         {/* ✅ Global Redux Store Provider */}
           {/* ✅ Toasts */}
           <Toaster position="top-right" reverseOrder={false} />

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginTeacher, registerTeacher } from "./authThunks";
+import { loginTeacher, registerTeacher, verifyTeacher } from "./authThunks";
 import { AuthState } from "./types";
 
 const initialState: AuthState = {
@@ -34,6 +34,9 @@ const authSlice = createSlice({
         state.error = action.error.message || "Login failed";
       })
       .addCase(registerTeacher.fulfilled, (state, action) => {
+        state.user = action.payload?.teacher || null;
+      })
+      .addCase(verifyTeacher.fulfilled, (state, action) => {
         state.user = action.payload?.teacher || null;
       });
   },

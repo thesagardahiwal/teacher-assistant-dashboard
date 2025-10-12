@@ -1,7 +1,7 @@
-import { Teacher } from "@/services/teacherService";
+import { ITeacher } from "@/types/teacher.types";
 
 export interface AuthState {
-    user: Teacher | null
+    user: ITeacher | null
     loading: boolean,
     error: string | null,
 }

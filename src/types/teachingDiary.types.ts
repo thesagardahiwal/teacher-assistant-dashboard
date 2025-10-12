@@ -1,4 +1,5 @@
 export interface ITeachingDiary extends Document {
+  _id: string;
   teacher: string;
   batch: string;
   subject: string;
