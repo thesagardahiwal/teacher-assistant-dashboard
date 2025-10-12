@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAssignment, evaluateAssignment, fetchAssignments } from "./assignmentThunks";
+import { IAssignment } from "@/types/assessment.types";
 
 interface AssignmentState {
-  assignments: any[];
+  assignments: IAssignment[];
   loading: boolean;
   error: string | null;
 }
@@ -24,7 +25,9 @@ const assignmentSlice = createSlice({
       })
       .addCase(createAssignment.fulfilled, (state, action) => {
         state.loading = false;
-        state.assignments.push(action.payload);
+        const assignment = action.payload;
+        if (!assignment) return;
+        state.assignments.push(assignment);
       })
       .addCase(fetchAssignments.fulfilled, (state, action) => {
         state.assignments = action.payload as any[] || [];

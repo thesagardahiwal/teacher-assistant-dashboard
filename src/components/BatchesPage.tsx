@@ -64,7 +64,11 @@ export default function BatchesPage() {
 
       {/* Content */}
       {batches.length === 0 ? (
-        <EmptyState onCreateBatch={() => setIsCreateModalOpen(true)} />
+        <EmptyState 
+            onCreate={() => setIsCreateModalOpen(true)}
+            title='Batch'
+            desciption='Start organizing your students by creating batches. Batches help you manage classes, assign teachers, and track academic progress efficiently.'
+            />
       ) : viewMode === 'grid' ? (
         <BatchGrid
           batches={batches}
