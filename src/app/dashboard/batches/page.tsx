@@ -1,8 +1,11 @@
+"use client"
+
+import BatchesPage from '@/components/BatchesPage'
 import React from 'react'
 
 function page() {
   return (
-    <div>page</div>
+    <BatchesPage />
   )
 }
 

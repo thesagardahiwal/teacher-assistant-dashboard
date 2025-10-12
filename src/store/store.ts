@@ -6,6 +6,7 @@ import assignmentReducer from "@/features/assignments/assignmentSlice";
 import syllabusReducer from "@/features/syllabus/syllabusSlice";
 import diaryReducer from "@/features/diary/diarySlice";
 import performanceReducer from "@/features/performance/performanceSlice";
+import batchReducer from "@/features/batch/batchSlice";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     syllabus: syllabusReducer,
     diary: diaryReducer,
     performance: performanceReducer,
+    batches: batchReducer
   },
   devTools: process.env.NODE_ENV !== "production",
 });
