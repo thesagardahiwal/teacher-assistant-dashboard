@@ -1,13 +1,15 @@
-import { studentService } from "@/services";
+// thunks/studentThunks.ts
+
+
+import { StudentFilters, studentService } from "@/services/studentService";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-
 export const fetchStudents = createAsyncThunk(
-  "students/fetchAll",
-  async (_, thunkAPI) => {
+  "students/",
+  async (filters: StudentFilters | null, thunkAPI) => {
     try {
-      const res = await studentService.getAll();
-      return res.data;
+      const res = await studentService.getAll(filters);
+      return res;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.message);
     }
@@ -15,7 +17,7 @@ export const fetchStudents = createAsyncThunk(
 );
 
 export const importStudents = createAsyncThunk(
-  "students/import",
+  "students/importStudents",
   async (students: any[], thunkAPI) => {
     try {
       const res = await studentService.import(students);

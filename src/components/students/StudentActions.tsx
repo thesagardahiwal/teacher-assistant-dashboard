@@ -2,8 +2,14 @@
 
 import Link from "next/link";
 import { studentService } from "@/services";
+import { Student } from "@/types/student.types";
 
-export default function StudentActions({ student, onRefresh }) {
+interface Props {
+  student: Student;
+  onRefresh: () => void;
+}
+
+export default function StudentActions({ student, onRefresh } : Props) {
   const handleDelete = async () => {
     await studentService.remove(student._id);
     onRefresh();

@@ -33,7 +33,7 @@ const batchSlice = createSlice({
       })
       .addCase(fetchBatches.fulfilled, (state, action) => {
         state.loading = false;
-        state.list = action.payload || [];
+        state.list = Object.values(action.payload || {}) || [];
       })
       .addCase(fetchBatches.rejected, (state, action) => {
         state.loading = false;

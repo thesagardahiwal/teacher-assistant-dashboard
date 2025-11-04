@@ -1,32 +1,59 @@
+// components/StudentTable.tsx
 import StudentActions from "./StudentActions";
 
-export default function StudentTable({ students, onRefresh }) {
+interface StudentTableProps {
+  students: any[];
+  onRefresh: () => void;
+  pagination?: any;
+}
+
+export default function StudentTable({ students, onRefresh, pagination }: StudentTableProps) {
   return (
-    <table className="w-full border-collapse border border-gray-300">
-      <thead>
-        <tr className="bg-gray-100">
-          <th className="border p-2">Roll No</th>
-          <th className="border p-2">Name</th>
-          <th className="border p-2">Batch</th>
-          <th className="border p-2">Email</th>
-          <th className="border p-2">Attendance %</th>
-          <th className="border p-2">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {Array.isArray(students) && students.map((s) => (
-          <tr key={s._id}>
-            <td className="border p-2">{s.roll}</td>
-            <td className="border p-2">{s.name}</td>
-            <td className="border p-2">{s.batchId}</td>
-            <td className="border p-2">{s.email || "-"}</td>
-            <td className="border p-2">{s.attendance || "0"}%</td>
-            <td className="border p-2">
-              <StudentActions student={s} onRefresh={onRefresh} />
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="bg-white rounded-lg shadow">
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-gray-50 border-b">
+              <th className="text-left p-4 font-semibold text-gray-700">Roll No</th>
+              <th className="text-left p-4 font-semibold text-gray-700">Name</th>
+              <th className="text-left p-4 font-semibold text-gray-700">Department</th>
+              <th className="text-left p-4 font-semibold text-gray-700">Year</th>
+              <th className="text-left p-4 font-semibold text-gray-700">Email</th>
+              <th className="text-left p-4 font-semibold text-gray-700">Phone</th>
+              <th className="text-left p-4 font-semibold text-gray-700">Attendance %</th>
+              <th className="text-left p-4 font-semibold text-gray-700">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.isArray(students) && students.length > 0 ? (
+              students.map((student) => (
+                <tr key={student._id} className="border-b hover:bg-gray-50">
+                  <td className="p-4">{student.rollNumber}</td>
+                  <td className="p-4 font-medium">{student.name}</td>
+                  <td className="p-4">{student.department}</td>
+                  <td className="p-4">
+                    {student.batch?.year || student.year || '-'}
+                  </td>
+                  <td className="p-4">{student.email || "-"}</td>
+                  <td className="p-4">{student.phone || "-"}</td>
+                  <td className="p-4">
+                    {student.attendanceStats?.percentage?.toFixed(1) || "0"}%
+                  </td>
+                  <td className="p-4">
+                    <StudentActions student={student} onRefresh={onRefresh} />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={8} className="p-8 text-center text-gray-500">
+                  No students found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }

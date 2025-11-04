@@ -6,6 +6,7 @@ import {
   Settings,
   BookTextIcon,
   MenuSquareIcon,
+  BookIcon,
 } from 'lucide-react';
 
 export const menuItems = [
@@ -13,6 +14,7 @@ export const menuItems = [
   { icon: <Users className="w-5 h-5" />, label: 'Students', path: '/dashboard/students' },
   { icon: <BookOpen className="w-5 h-5" />, label: 'Batch', path: '/dashboard/batches' },
   { icon: <MenuSquareIcon className="w-5 h-5" />, label: 'Assignment', path: '/dashboard/assignments' },
+  { icon: <BookIcon className="w-5 h-5" />, label: 'Subject', path: '/dashboard/subjects' },
   { icon: <BookTextIcon className="w-5 h-5" />, label: 'Diary', path: '/dashboard/diary' },
   { icon: <Settings className="w-5 h-5" />, label: 'Settings', path: '/dashboard/settings' },
 ];

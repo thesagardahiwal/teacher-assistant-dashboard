@@ -7,6 +7,6 @@ export interface Assignment extends IAssignment {
 
 export const assignmentService = {
   getAll: () => fetchHandler.get<Assignment[]>("/assignments"),
-  create: (data: Partial<Assignment>) => fetchHandler.post<Assignment>("/assignments", data),
+  create: (data: Partial<Assignment>) => fetchHandler.post<Assignment>("/assignments/create", data),
   getById: (id: string) => fetchHandler.get<Assignment>(`/assignments/${id}`),
 };

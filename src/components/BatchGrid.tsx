@@ -12,7 +12,7 @@ interface BatchGridProps {
 
 export function BatchGrid({ batches, onViewBatch, onEditBatch, onDeleteBatch }: BatchGridProps) {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
-
+  console.log("Batches", typeof batches);
   const getYearColor = (year: string) => {
     const colors = {
       'FE': 'bg-green-100 text-green-800 border-green-200',
@@ -33,7 +33,7 @@ export function BatchGrid({ batches, onViewBatch, onEditBatch, onDeleteBatch }: 
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {batches.map((batch) => (
+      {Array.isArray(batches) && batches.map((batch) => (
         <div
           key={batch.batchId}
           className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
@@ -104,7 +104,7 @@ export function BatchGrid({ batches, onViewBatch, onEditBatch, onDeleteBatch }: 
                 <Users className="w-4 h-4" />
                 <span>Students</span>
               </div>
-              <span className="font-semibold text-gray-900">{batch.students.length}</span>
+              <span className="font-semibold text-gray-900">{batch.students?.length}</span>
             </div>
             
             <div className="flex items-center justify-between text-sm">
@@ -112,7 +112,7 @@ export function BatchGrid({ batches, onViewBatch, onEditBatch, onDeleteBatch }: 
                 <UserCheck className="w-4 h-4" />
                 <span>Teachers</span>
               </div>
-              <span className="font-semibold text-gray-900">{batch.teachers.length}</span>
+              <span className="font-semibold text-gray-900">{batch.teachers?.length}</span>
             </div>
             
             <div className="flex items-center justify-between text-sm">
@@ -120,7 +120,7 @@ export function BatchGrid({ batches, onViewBatch, onEditBatch, onDeleteBatch }: 
                 <BookOpen className="w-4 h-4" />
                 <span>Subjects</span>
               </div>
-              <span className="font-semibold text-gray-900">{batch.subjects.length}</span>
+              <span className="font-semibold text-gray-900">{batch.subjects?.length}</span>
             </div>
           </div>
 

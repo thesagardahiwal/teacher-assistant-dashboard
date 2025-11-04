@@ -17,16 +17,12 @@ import { IBatch } from '@/types/batch.types';
 type ViewMode = 'grid' | 'list';
 
 export default function BatchesPage() {
-  const { batches, loading, fetchBatches, selectBatch } = useBatches();
+  const { batches, loading, selectBatch } = useBatches();
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingBatch, setEditingBatch] = useState<IBatch | null>(null);
   const [deletingBatch, setDeletingBatch] = useState<IBatch | null>(null);
   const [viewingBatch, setViewingBatch] = useState<IBatch | null>(null);
-
-  useEffect(() => {
-    fetchBatches();
-  }, []);
 
   const handleEditBatch = (batch: IBatch) => {
     setEditingBatch(batch);

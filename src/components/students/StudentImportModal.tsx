@@ -4,6 +4,18 @@ import { useState, useMemo } from "react";
 import Papa from "papaparse";
 import { studentService } from "@/services";
 import { IStudent } from "@/types/student.types";
+import { useBatches } from "@/hooks/useBatches";
+
+function normalizePhone(phone: string): string {
+  if (!phone) return "";
+  
+  // Remove all non-digit characters
+  const digitsOnly = phone.replace(/\D/g, '');
+  
+  // Take only the last 10 digits (in case country code is included)
+  return digitsOnly.slice(-10);
+}
+
 
 function deduplicateStudents(students: IStudent[]): IStudent[] {
     const seen = new Map<string, IStudent>();
@@ -21,40 +33,41 @@ function deduplicateStudents(students: IStudent[]): IStudent[] {
     return Array.from(seen.values());
 }
 
-function mapRowToStudent(row: Record<string, string>, batch: string, department: string, year: string): IStudent {
-    // Use rollNumber or enrollmentNumber as unique stable id
-    const baseId = row.rollNumber || row.enrollmentNumber || `SID-${Math.random().toString(36).slice(2)}`;
+function mapRowToStudent(row: Record<string, string>, batch: string, batchName:string, department: string, year: string): IStudent {
+  const baseId = row.rollNumber || row.enrollmentNumber || `SID-${Math.random().toString(36).slice(2)}`;
 
-    return {
-        studentId: baseId,
-        rollNumber: row.rollNumber || "",
-        enrollmentNumber: row.enrollmentNumber || "",
-        name: row.name || "",
-        email: row.email || "",
-        phone: row.phone || "",
-        batch,
-        department,
-        guardian: {
-            name: row.guardian_name || "",
-            phone: row.guardian_phone || "",
-            email: row.guardian_email || "",
-        },
-        attendanceStats: {
-            totalLectures: 0,
-            attendedLectures: 0,
-            percentage: 0,
-        },
-        performance: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        year: year
-    };
+  return {
+    studentId: baseId,
+    rollNumber: row.rollNumber || "",
+    enrollmentNumber: row.enrollmentNumber || "",
+    name: row.name || "",
+    email: row.email || "",
+    phone: normalizePhone(row.phone || ""), // Normalize here
+    batch,
+    department,
+    guardian: {
+      name: row.guardian_name || "",
+      phone: normalizePhone(row.guardian_phone || ""), // Normalize here too
+      email: row.guardian_email || "",
+    },
+    attendanceStats: {
+      totalLectures: 0,
+      attendedLectures: 0,
+      percentage: 0,
+    },
+    performance: [],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    year: year
+  };
 }
 
 export default function StudentImportModal({ onImported }: { onImported: () => void }) {
     const [open, setOpen] = useState(false);
+    const { batches } = useBatches();
     const [students, setStudents] = useState<IStudent[]>([]);
     const [selectedStudents, setSelectedStudents] = useState<IStudent[]>([]);
+    const [batchId, setBatchId] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [batch, setBatch] = useState("Batch A");
     const [department, setDepartment] = useState("CSE");
@@ -88,7 +101,7 @@ export default function StudentImportModal({ onImported }: { onImported: () => v
             skipEmptyLines: true,
             complete: (result) => {
                 const mapped = (result.data as Record<string, string>[]).map((row) =>
-                    mapRowToStudent(row, batch, department, year)
+                    mapRowToStudent(row, batchId, batch, department, year)
                 );
                 const deduped = deduplicateStudents(mapped);
                 setStudents(deduped);
@@ -135,6 +148,15 @@ export default function StudentImportModal({ onImported }: { onImported: () => v
 
     const handleSubmit = async () => {
         console.log("Importing students:", selectedStudents);
+        const invalidPhones = selectedStudents.filter(s =>
+            s.phone && s.phone.length > 10 ||
+            s.guardian?.phone && s.guardian.phone.length > 10
+        );
+
+        if (invalidPhones.length > 0) {
+            alert(`Some phone numbers exceed 10 characters. Please fix them before importing.`);
+            return;
+        }
         await studentService.import(selectedStudents);
         // setOpen(false);
         // onImported();
@@ -162,10 +184,39 @@ export default function StudentImportModal({ onImported }: { onImported: () => v
                         <h2 className="font-bold mb-4">Import Students</h2>
 
                         {/* Batch & Department */}
-                        <div className="flex gap-2 mb-4">
-                            <input value={batch} onChange={(e) => setBatch(e.target.value)} placeholder="Batch" className="border rounded px-3 py-1" />
-                            <input value={department} onChange={(e) => setDepartment(e.target.value)} placeholder="Department" className="border rounded px-3 py-1" />
-                            <input value={year} onChange={(e) => setYear(e.target.value)} placeholder="Year" className="border rounded px-3 py-1" />
+                        <div className="flex gap-3 mb-4 items-center">
+                            <select
+                                value={batch}
+                                onChange={(e) => {
+                                    const selectedBatch = batches.find((b) => b.batchId === e.target.value);
+                                    if (selectedBatch) {
+                                        setBatchId(selectedBatch._id);
+                                        setBatch(selectedBatch.name);
+                                        setDepartment(selectedBatch.department);
+                                        setYear(selectedBatch.year);
+                                    }
+                                }}
+                                className="border rounded px-3 py-2 w-52"
+                            >
+                                <option value="">Select Batch</option>
+                                {batches.map((b) => (
+                                    <option key={b.batchId} value={b.batchId}>
+                                        {b.name} ({b.department} - {b.year})
+                                    </option>
+                                ))}
+                            </select>
+
+                            <div className="text-sm text-gray-600">
+                                {batch ? (
+                                    <>
+                                        <p><strong>Batch:</strong> {batch}</p>
+                                        <p><strong>Dept:</strong> {department}</p>
+                                        <p><strong>Year:</strong> {year}</p>
+                                    </>
+                                ) : (
+                                    <p>Select a batch to import students</p>
+                                )}
+                            </div>
                         </div>
 
                         {/* File Upload */}
@@ -205,7 +256,6 @@ export default function StudentImportModal({ onImported }: { onImported: () => v
                                                 <th className="border min-w-32 p-2">Name</th>
                                                 <th className="border min-w-32 p-2">Email</th>
                                                 <th className="border min-w-32 p-2">Phone</th>
-                                                <th className="border min-w-32 p-2">Batch</th>
                                                 <th className="border min-w-32 p-2">Department</th>
                                                 <th className="border min-w-32 p-2">Guardian Name</th>
                                                 <th className="border min-w-32 p-2">Guardian Phone</th>
@@ -263,15 +313,8 @@ export default function StudentImportModal({ onImported }: { onImported: () => v
                                                         </td>
                                                         <td className="border p-2">
                                                             <input
-                                                                value={s.batch}
-                                                                onChange={(e) => handleChange(s.studentId, "batch", e.target.value)}
-                                                                className="border rounded px-2 py-1 w-full"
-                                                            />
-                                                        </td>
-                                                        <td className="border p-2">
-                                                            <input
                                                                 value={s.department}
-                                                                onChange={(e) => handleChange(s.studentId, "department", e.target.value)}
+                                                                disabled
                                                                 className="border rounded px-2 py-1 w-full"
                                                             />
                                                         </td>
