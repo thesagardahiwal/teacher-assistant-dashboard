@@ -38,10 +38,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Content Section */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          {/* <Navbar
+          <Navbar
             onMenuToggle={toggleMobileMenu}
             isMobileMenuOpen={isMobileMenuOpen}
-          /> */}
+          />
           
           <main className="flex-1 p-4 md:p-6 overflow-y-auto">
             {children}

@@ -3,11 +3,12 @@ import useAuth from "@/hooks/useAuth";
 import { UserCircle2Icon } from 'lucide-react'
 export default function Header() {
     const { user } = useAuth();
+    const now = new Date();
   return (
     <div className="flex justify-between items-center bg-white p-5 rounded-2xl shadow">
       <div>
         <h2 className="text-xl font-semibold">Welcome back, {user?.name.split(' ')[0]} 👋</h2>
-        <p className="text-sm text-gray-500">June 08, Wednesday</p>
+        <p className="text-sm text-gray-500">{now.toLocaleDateString('en-US', {month: 'long', day: '2-digit', weekday: 'long'})}</p>
       </div>
       <div className="flex items-center gap-3">
         {user?.profilePic ? (

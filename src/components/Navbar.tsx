@@ -1,6 +1,9 @@
-import { Search, UserCircle2, Menu } from 'lucide-react';
-import Link from 'next/link';
-import useAuth from '@/hooks/useAuth';
+"use client";
+
+import { Search, UserCircle2, Menu } from "lucide-react";
+import Link from "next/link";
+import { useState, useRef, useEffect } from "react";
+import useAuth from "@/hooks/useAuth";
 
 interface NavbarProps {
   onMenuToggle: () => void;
@@ -9,21 +12,8 @@ interface NavbarProps {
 
 export function Navbar({ onMenuToggle, isMobileMenuOpen }: NavbarProps) {
   return (
-    <header className="flex items-center justify-between px-4 md:px-6 py-4 bg-white shadow">
-      {/* Mobile Menu Button */}
-      <button
-        onClick={onMenuToggle}
-        className="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100"
-        aria-label="Toggle menu"
-      >
-        <Menu className="w-5 h-5" />
-      </button>
-
-      {/* Search - Only show when mobile menu is closed */}
-      {!isMobileMenuOpen && <SearchBar />}
-
-      {/* Profile */}
-      <ProfileSection />
+    <header className="relative">
+      <FloatingMenuButton onMenuToggle={onMenuToggle} />
     </header>
   );
 }
@@ -44,11 +34,82 @@ function SearchBar() {
 function ProfileSection() {
   const { user } = useAuth();
   return (
-    <Link href={"/dashboard/profile"} className="flex items-center space-x-3">
+    <Link href="/dashboard/profile" className="flex items-center space-x-3">
       <UserCircle2 className="w-8 h-8 text-blue-600" />
       <span className="hidden sm:inline font-medium text-gray-700">
         {user?.name || "Failed to load!"}
       </span>
     </Link>
+  );
+}
+
+/* -----------------------------------------------------------
+   🧭 Floating Menu Button (Mobile only, draggable)
+----------------------------------------------------------- */
+function FloatingMenuButton({ onMenuToggle }: { onMenuToggle: () => void }) {
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+
+  // Default position: bottom-right
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      const x = window.innerWidth - 80;
+      const y = window.innerHeight - 100;
+      setPosition({ x, y });
+    }
+  }, []);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!buttonRef.current) return;
+    setDragging(true);
+    const rect = buttonRef.current.getBoundingClientRect();
+    setOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!dragging) return;
+    const x = e.clientX - offset.x;
+    const y = e.clientY - offset.y;
+    setPosition({ x, y });
+  };
+
+  const handleMouseUp = () => setDragging(false);
+
+  useEffect(() => {
+    if (dragging) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    } else {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    }
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [dragging, offset]);
+
+  return (
+    <button
+      ref={buttonRef}
+      onMouseDown={handleMouseDown}
+      onClick={() => {
+        if (!dragging) onMenuToggle();
+      }}
+      className="md:hidden fixed z-50 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-transform active:scale-95"
+      style={{
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        touchAction: "none",
+      }}
+      aria-label="Floating Menu"
+    >
+      <Menu className="w-6 h-6" />
+    </button>
   );
 }

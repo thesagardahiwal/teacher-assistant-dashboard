@@ -11,16 +11,16 @@ interface SidebarProps {
 
 export function Sidebar({ activeItem, onItemClick }: SidebarProps) {
   return (
-    <aside className="hidden md:flex flex-col justify-between w-64 bg-white border-r shadow-sm">
+    <aside className="hidden md:flex flex-col justify-between w-64 p-2 bg-gray-100">
       {/* --- Top Section --- */}
       <div>
-        <div className="p-6 border-b">
+        <div className="p-6 bg-white rounded-2xl">
           <h1 className="text-2xl font-bold text-gray-800">TeacherAssistX</h1>
           <p className="text-xs text-gray-500 mt-1">Dashboard</p>
         </div>
 
         {/* --- Nav Items --- */}
-        <nav className="mt-6 space-y-1">
+        <nav className="mt-6 bg-white rounded-2xl p-2 py-4 space-y-3">
           {menuItems.map((item) => (
             <SidebarItem
               key={item.label}
