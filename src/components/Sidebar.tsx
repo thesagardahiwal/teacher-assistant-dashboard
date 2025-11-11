@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import { menuItems } from './MenuItems';
+import { PlusCircle } from 'lucide-react';
 
 interface SidebarProps {
   activeItem: string;
@@ -8,18 +11,36 @@ interface SidebarProps {
 
 export function Sidebar({ activeItem, onItemClick }: SidebarProps) {
   return (
-    <aside className="hidden md:block w-64 bg-white shadow-md p-5">
-      <h1 className="text-2xl font-bold text-blue-600 mb-8">TeacherAssistX</h1>
-      <nav className="space-y-4">
-        {menuItems.map((item) => (
-          <SidebarItem
-            key={item.label}
-            item={item}
-            isActive={activeItem === item.label}
-            onClick={() => onItemClick(item.label)}
-          />
-        ))}
-      </nav>
+    <aside className="hidden md:flex flex-col justify-between w-64 bg-white border-r shadow-sm">
+      {/* --- Top Section --- */}
+      <div>
+        <div className="p-6 border-b">
+          <h1 className="text-2xl font-bold text-gray-800">TeacherAssistX</h1>
+          <p className="text-xs text-gray-500 mt-1">Dashboard</p>
+        </div>
+
+        {/* --- Nav Items --- */}
+        <nav className="mt-6 space-y-1">
+          {menuItems.map((item) => (
+            <SidebarItem
+              key={item.label}
+              item={item}
+              isActive={activeItem === item.label}
+              onClick={() => onItemClick(item.label)}
+            />
+          ))}
+        </nav>
+      </div>
+
+      {/* --- Bottom Create Class Card --- */}
+      <div className="m-4 bg-gradient-to-r from-indigo-500 to-purple-500 p-5 rounded-2xl text-white shadow-md">
+        <div className="text-sm opacity-90">Create new class chat now</div>
+        <button
+          className="mt-4 bg-white text-indigo-600 font-medium px-4 py-2 rounded-xl w-full flex items-center justify-center gap-2 hover:bg-gray-100 transition"
+        >
+          <PlusCircle size={16} /> Create class
+        </button>
+      </div>
     </aside>
   );
 }
@@ -35,12 +56,21 @@ function SidebarItem({ item, isActive, onClick }: SidebarItemProps) {
     <Link
       href={item.path}
       onClick={onClick}
-      className={`flex items-center w-full px-3 py-2 rounded-lg hover:bg-blue-100 transition ${
-        isActive ? 'bg-blue-200 text-blue-800 font-semibold' : ''
-      }`}
+      className={`flex items-center gap-3 px-5 py-3 mx-2 rounded-xl transition-all duration-150 
+        ${
+          isActive
+            ? 'bg-indigo-100 text-indigo-700 font-semibold shadow-sm'
+            : 'text-gray-700 hover:bg-gray-100'
+        }`}
     >
-      <span className="mr-3">{item.icon}</span>
-      {item.label}
+      <span
+        className={`flex items-center justify-center w-5 h-5 ${
+          isActive ? 'text-indigo-600' : 'text-gray-500'
+        }`}
+      >
+        {item.icon}
+      </span>
+      <span>{item.label}</span>
     </Link>
   );
 }

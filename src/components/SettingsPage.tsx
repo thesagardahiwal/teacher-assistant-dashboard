@@ -32,14 +32,14 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SettingsHeader />
         
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-1">
-            <nav className="space-y-1">
+            <nav className="space-y-2 bg-white rounded-2xl w-fit p-4">
               <SidebarItem
                 icon={<PaintBucketIcon/>}
                 title="Appearance"

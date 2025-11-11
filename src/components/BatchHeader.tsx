@@ -14,7 +14,7 @@ export function BatchHeader({
   batchCount 
 }: BatchHeaderProps) {
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="flex flex-col bg-white rounded-2xl p-4 sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-blue-100 rounded-lg">

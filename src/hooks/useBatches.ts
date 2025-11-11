@@ -8,32 +8,43 @@ import {
   deleteBatch,
 } from "@/features/batch/batchThunks";
 import { setSelectedBatch } from "@/features/batch/batchSlice";
-import { useEffect } from "react";
+import { useEffect, useCallback, useMemo } from "react";
 
 export const useBatches = () => {
   const dispatch = useAppDispatch();
-  const { list, loading, error, selectedBatch } = useAppSelector(
+  const { list, loading, error, selectedBatch, isFetched } = useAppSelector(
     (state) => state.batches
   );
 
   useEffect(() => {
-    // ✅ Only fetch once when component mounts if not already loaded
-    if (!Array.isArray(list) || list.length === 0) {
+    if (!isFetched) {
       dispatch(fetchBatches());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // 👈 Empty dependency ensures no infinite loop
+  }, [dispatch, isFetched]);
 
-  return {
-    batches: Array.isArray(list) ? list : [], // ✅ Always return array
-    loading,
-    error,
-    selectedBatch,
-    fetchBatches: () => dispatch(fetchBatches()),
-    createBatch: (data: any) => dispatch(createBatch(data)),
-    updateBatch: (batchId: string, data: any) =>
-      dispatch(updateBatch({ batchId, data })),
-    deleteBatch: (batchId: string) => dispatch(deleteBatch(batchId)),
-    selectBatch: (batch: any) => dispatch(setSelectedBatch(batch)),
-  };
+
+  const fetchAll = useCallback(() => dispatch(fetchBatches()), [dispatch]);
+  const create = useCallback((data: any) => dispatch(createBatch(data)), [dispatch]);
+  const update = useCallback(
+    (batchId: string, data: any) => dispatch(updateBatch({ batchId, data })),
+    [dispatch]
+  );
+  const remove = useCallback((batchId: string) => dispatch(deleteBatch(batchId)), [dispatch]);
+  const select = useCallback((batch: any) => dispatch(setSelectedBatch(batch)), [dispatch]);
+
+  // ✅ Memoize entire return object
+  return useMemo(
+    () => ({
+      batches: Array.isArray(list) ? list : [],
+      loading,
+      error,
+      selectedBatch,
+      fetchBatches: fetchAll,
+      createBatch: create,
+      updateBatch: update,
+      deleteBatch: remove,
+      selectBatch: select,
+    }),
+    [list, loading, error, selectedBatch, fetchAll, create, update, remove, select]
+  );
 };

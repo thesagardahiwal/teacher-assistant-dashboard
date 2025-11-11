@@ -7,6 +7,7 @@ interface BatchState {
   list: Batch[];
   loading: boolean;
   error: string | null;
+  isFetched: boolean;
   selectedBatch: Batch | null;
 }
 
@@ -15,6 +16,7 @@ const initialState: BatchState = {
   loading: false,
   error: null,
   selectedBatch: null,
+  isFetched: false,
 };
 
 const batchSlice = createSlice({
@@ -34,10 +36,12 @@ const batchSlice = createSlice({
       .addCase(fetchBatches.fulfilled, (state, action) => {
         state.loading = false;
         state.list = Object.values(action.payload || {}) || [];
+        state.isFetched = true;
       })
       .addCase(fetchBatches.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+        state.isFetched = true;
       })
 
       // Create batch
@@ -48,10 +52,12 @@ const batchSlice = createSlice({
         state.loading = false;
         if (action.payload)
             state.list.push(action.payload);
+        state.isFetched = true;
       })
       .addCase(createBatch.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+        state.isFetched = true;
       })
 
       // Update batch
@@ -60,11 +66,13 @@ const batchSlice = createSlice({
         if (!updatedBatch) return;
         const idx = state.list.findIndex(b => b.batchId === updatedBatch.batchId);
         if (idx !== -1) state.list[idx] = updatedBatch;
+        state.isFetched = true;
       })
 
       // Delete batch
       .addCase(deleteBatch.fulfilled, (state, action) => {
         state.list = state.list.filter(b => b.batchId !== action.payload.batchId);
+        state.isFetched = true;
       });
   },
 });

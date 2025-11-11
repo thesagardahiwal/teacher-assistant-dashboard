@@ -50,10 +50,10 @@ export default async function LandingPage() {
 
       {/* Hero Section */}
       <section className="max-w-6xl mx-auto px-6 py-16 sm:py-24 text-center">
-        <div className="mb-8 inline-flex items-center gap-2 bg-teal-100/50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-full px-4 py-1 text-sm text-teal-700 dark:text-teal-300">
+        {/* <div className="mb-8 inline-flex items-center gap-2 bg-teal-100/50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-full px-4 py-1 text-sm text-teal-700 dark:text-teal-300">
           <FaRegLightbulb className="text-teal-500" />
           <span>Trusted by 5,000+ educators</span>
-        </div>
+        </div> */}
         
         <h1 className="text-4xl sm:text-6xl font-bold leading-tight mb-6">
           Transform Your <span className="text-teal-600 dark:text-teal-400">Teaching</span> Workflow
